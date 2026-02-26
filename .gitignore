@@ -1,0 +1,30 @@
+# Environment & OS
+.env
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+build/
+.npm/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env/
+Pipfile.lock
+.pytest_cache/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+voiceover_script.md
+artifacts/

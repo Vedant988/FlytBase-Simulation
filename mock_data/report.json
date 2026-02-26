@@ -1,0 +1,14 @@
+[
+    {
+        "Drone_A": "drone_A",
+        "Drone_B": "drone_B",
+        "exact_conflict_time": 14.142135623730951,
+        "conflict_location": [
+            50.0,
+            50.0,
+            50.0
+        ],
+        "minimum_separation": 0.0,
+        "severity": "CRITICAL"
+    }
+]
