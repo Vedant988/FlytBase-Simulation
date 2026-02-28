@@ -19,25 +19,38 @@ class TelemetryEngine:
             self.bogie_estimators[drone_id] = {
                 "state": np.array([data["x"], data["y"], data["z"], 
                                    data.get("vx", 0), data.get("vy", 0), data.get("vz", 0)]),
-                "covariance": np.eye(6) * 5.0,
+                "covariance": np.eye(6) * 1.0,   # Start near converged steady-state (trace[:3,:3]=3 ≈ controlled radius)
                 "last_update": data["timestamp"]
             }
         else:
-            dt = data["timestamp"] - self.bogie_estimators[drone_id]["last_update"]
+            dt = max(0.001, data["timestamp"] - self.bogie_estimators[drone_id]["last_update"])
             est = self.bogie_estimators[drone_id]
             
+            # Prediction step: propagate state and covariance forward
             F = np.eye(6)
             F[0,3] = dt
             F[1,4] = dt
             F[2,5] = dt
             
+            Q = np.eye(6) * 0.1 * dt   # Process noise
             est["state"] = F.dot(est["state"])
-            est["covariance"] += np.eye(6) * 0.1 * dt
+            P_pred = F.dot(est["covariance"]).dot(F.T) + Q
+            
+            # Measurement update: full Kalman correction to prevent unbounded growth
+            H = np.zeros((3, 6))        # Observation matrix (x, y, z only measured)
+            H[0,0] = H[1,1] = H[2,2] = 1.0
+            R = np.eye(3) * 2.0         # Measurement noise (2m GPS noise)
+            
+            S = H.dot(P_pred).dot(H.T) + R
+            K = P_pred.dot(H.T).dot(np.linalg.inv(S))  # Kalman gain
             
             meas = np.array([data["x"], data["y"], data["z"]])
-            est["state"][0:3] = 0.8 * est["state"][0:3] + 0.2 * meas
+            innovation = meas - H.dot(est["state"])
+            est["state"] = est["state"] + K.dot(innovation)
+            est["covariance"] = (np.eye(6) - K.dot(H)).dot(P_pred)  # Corrected covariance
             
             est["last_update"] = data["timestamp"]
+
             
     def get_latest_state(self):
         states = {}
@@ -52,7 +65,7 @@ class TelemetryEngine:
                     "x": est["state"][0], "y": est["state"][1], "z": est["state"][2],
                     "vx": est["state"][3], "vy": est["state"][4], "vz": est["state"][5],
                     "type": "bogie",
-                    "uncertainty_radius": float(np.trace(est["covariance"][:3,:3]))
+                    "uncertainty_radius": min(30.0, float(np.trace(est["covariance"][:3,:3])))
                 }
             else:
                 states[d_id] = {

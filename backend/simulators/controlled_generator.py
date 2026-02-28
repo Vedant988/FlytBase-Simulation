@@ -28,17 +28,32 @@ class ControlledGenerator(TelemetryGenerator):
             "current_wp_idx": 0,
             "pos": waypoints[0].copy(),
             "paused": False,
+            "paused_at": None,
             "hz": 2.0,
             "last_tick": time.time()
         }
 
     def pause(self, drone_id: str):
-        if drone_id in self.drones:
+        if drone_id in self.drones and not self.drones[drone_id]["paused"]:
             self.drones[drone_id]["paused"] = True
+            self.drones[drone_id]["paused_at"] = time.time()
 
     def resume(self, drone_id: str):
         if drone_id in self.drones:
             self.drones[drone_id]["paused"] = False
+            self.drones[drone_id]["paused_at"] = None
+
+    def get_paused_status(self) -> list:
+        """Returns list of paused drones with pause duration in seconds."""
+        now = time.time()
+        return [
+            {
+                "id": did,
+                "paused_for": round(now - s["paused_at"], 1) if s.get("paused_at") else 0,
+                "pos": s["pos"]
+            }
+            for did, s in self.drones.items() if s["paused"]
+        ]
 
     def remove_drone(self, drone_id: str):
         if drone_id in self.drones:

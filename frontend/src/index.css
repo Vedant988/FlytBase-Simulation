@@ -1,17 +1,57 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ── Apple-inspired design tokens ──────────────────────────────────────── */
 :root {
-  --bg-color: #050505;
-  --panel-bg: rgba(20, 20, 20, 0.65);
-  --panel-border: rgba(255, 255, 255, 0.1);
-  --accent: #3b82f6;
-  --accent-glow: rgba(59, 130, 246, 0.3);
-  --critical: #ef4444;
-  --warning: #f59e0b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  /* Backgrounds — deep, layered blacks */
+  --bg: #000000;
+  --surface-1: rgba(28, 28, 30, 0.92);
+  /* iOS grouped table bg */
+  --surface-2: rgba(44, 44, 46, 0.85);
+  /* elevated card */
+  --surface-3: rgba(58, 58, 60, 0.70);
+  /* tertiary fill */
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(255, 255, 255, 0.18);
+
+  /* System colours (iOS 17 dark palette) */
+  --blue: #0A84FF;
+  --green: #30D158;
+  --red: #FF453A;
+  --orange: #FF9F0A;
+  --purple: #BF5AF2;
+  --teal: #40CBE0;
+
+  /* Text hierarchy */
+  --text-primary: rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.3);
+
+  /* Blur */
+  --blur-sm: blur(12px);
+  --blur-md: blur(20px);
+  --blur-lg: blur(32px);
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+
+  /* Legacy compat */
+  --bg-color: #000;
+  --panel-bg: var(--surface-1);
+  --panel-border: var(--border);
+  --accent: var(--blue);
+  --accent-glow: rgba(10, 132, 255, 0.25);
+  --critical: var(--red);
+  --warning: var(--orange);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-secondary);
 }
 
+/* ── Reset ──────────────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -19,203 +59,247 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom Scrollbar for better UI/UX */
+/* ── Scrollbar — ultra-minimal ──────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.22);
 }
 
+/* ── App shell ──────────────────────────────────────────────────────────── */
 .app-container {
   width: 100vw;
   height: 100vh;
   position: relative;
 }
 
-/* Glassmorphism Panels */
+/* ── Glass panel — base card ────────────────────────────────────────────── */
 .glass-panel {
-  background: var(--panel-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--panel-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  background: var(--surface-1);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.6), inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
 }
 
+/* ── HUD overlay (top-left panel) ───────────────────────────────────────── */
 .hud-overlay {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 380px;
-  padding: 20px;
+  top: 16px;
+  left: 16px;
+  width: 360px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
   z-index: 10;
   pointer-events: auto;
 }
 
 .hud-overlay h1 {
-  font-size: 1.2rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
-  text-shadow: 0 0 10px var(--accent-glow);
-  margin-bottom: 5px;
+  color: var(--blue);
+  margin-bottom: 4px;
 }
 
+/* ── Status indicator ───────────────────────────────────────────────────── */
 .status-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  gap: 7px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
 }
 
-/* Timeline Scrubber */
+/* ── Timeline controls (in camera bar) ─────────────────────────────────── */
 .timeline-container {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  padding: 15px 25px;
-  z-index: 10;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
   pointer-events: auto;
 }
 
 .timeline-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
 }
 
 .timeline-slider {
   width: 100%;
   appearance: none;
-  background: rgba(255, 255, 255, 0.1);
-  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  height: 3px;
   border-radius: 2px;
   outline: none;
-  position: relative;
 }
 
 .timeline-slider::-webkit-slider-thumb {
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--text-main);
+  background: #fff;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
   transition: transform 0.1s;
 }
 
 .timeline-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 .conflict-ticker {
   position: absolute;
   top: 0;
-  height: 40px;
+  height: 32px;
   width: 2px;
-  background-color: var(--critical);
-  box-shadow: 0 0 8px var(--critical);
+  background: var(--red);
+  border-radius: 1px;
   pointer-events: none;
 }
 
-/* Conflict Alerts */
+/* ── Conflict alert cards ───────────────────────────────────────────────── */
 .conflict-card {
-  padding: 15px;
-  border-radius: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  border-left: 4px solid var(--critical);
-  margin-bottom: 10px;
-  animation: pulse-red 2s infinite;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 69, 58, 0.08);
+  border: 0.5px solid rgba(255, 69, 58, 0.3);
+  border-left: 3px solid var(--red);
+  margin-bottom: 8px;
 }
 
 .conflict-card h3 {
-  font-size: 0.95rem;
-  margin-bottom: 5px;
-  color: var(--critical);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--red);
 }
 
 .conflict-card.warning {
-  background: rgba(245, 158, 11, 0.1);
-  border-left-color: var(--warning);
-  animation: none;
+  background: rgba(255, 159, 10, 0.08);
+  border-color: rgba(255, 159, 10, 0.3);
+  border-left-color: var(--orange);
 }
 
 .conflict-card.warning h3 {
-  color: var(--warning);
+  color: var(--orange);
 }
 
 .conflict-card p {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.4;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .advisory-box {
-  margin-top: 10px;
-  padding: 8px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  font-size: 0.8rem;
+  margin-top: 8px;
+  padding: 7px 10px;
+  background: rgba(10, 132, 255, 0.08);
+  border: 0.5px solid rgba(10, 132, 255, 0.3);
+  border-radius: var(--r-sm);
+  font-size: 0.74rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
 }
 
 .advisory-box:hover {
-  background: rgba(59, 130, 246, 0.2);
-  transform: translateX(2px);
+  background: rgba(10, 132, 255, 0.15);
 }
 
+/* ── Pulse animation (subtle, not flashy) ───────────────────────────────── */
 @keyframes pulse-red {
-  0% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-  }
 
-  70% {
-    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-  }
-
+  0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 0 rgba(255, 69, 58, 0);
   }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 69, 58, 0.12);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ── Button — Apple: brightness lift hover, compress-press active ────────── */
+button {
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+  cursor: pointer;
+  transition:
+    filter 0.14s ease,
+    transform 0.10s ease,
+    box-shadow 0.14s ease !important;
+}
+
+/* Hover: brightness lift + micro-elevation */
+button:hover:not(:disabled) {
+  filter: brightness(1.14) !important;
+  transform: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
+}
+
+/* Active press: compress + dim */
+button:active:not(:disabled) {
+  filter: brightness(0.90) !important;
+  transform: scale(0.96) !important;
+  box-shadow: none !important;
+  transition: filter 0.06s, transform 0.06s !important;
+}
+
+/* Disabled: dim, no cursor change */
+button:disabled {
+  opacity: 0.32 !important;
+  cursor: default !important;
+  filter: none !important;
+  box-shadow: none !important;
 }
